@@ -1,11 +1,11 @@
-FROM debian:bookworm-slim
+FROM debian:13
 
 ENV PORT=7681
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y wget curl git python3 python3-pip neofetch && \
+    apt-get install -y wget curl git python3 python3-pip neofetch sudo && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN wget -qO /bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.3/ttyd.x86_64 && \
@@ -15,6 +15,4 @@ RUN echo "cd /root" >> /root/.bashrc
 
 EXPOSE 7681
 
-CMD ["/bin/bash", "-c", "\
-    echo \"export PS1='\\[\\033[01;31m\\]$USERNAME@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '\" >> /root/.bashrc && \
-    /bin/ttyd -p $PORT -c $USERNAME:$PASSWORD /bin/bash"]
+CMD ["/bin/bash","-lc", "/usr/local/bin/ttyd --writable -i 0.0.0.0 -p ${PORT} -c ${USERNAME}:${PASSWORD} /bin/bash"]
